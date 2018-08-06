@@ -1,3 +1,12 @@
-## Vue + Sematic UI를 활용하여 만든 Blog
+# STATIC
 
-작업일지 및 프로젝트는 따로 Blog에 개시 및 별도의 Repository로 공유예정.
+This directory contains your static files.
+Each file inside this directory is mapped to /.
+
+Example: /static/robots.txt is mapped as /robots.txt.
+
+More information about the usage of this directory in the documentation:
+https://nuxtjs.org/guide/assets#static
+
+**This directory is not required, you can delete it if you don't want to use it.**
+
