@@ -16,7 +16,7 @@ date: 2018/08/08
 
 간단히 도식화한 그림이다. 아래중 첫번째가 웹서버를 통한 컨테이너 접근이고 두번째는 같은 네트워크를 이용해서 다이렉트로 서로를 바라볼 수 있게 만든 방식이다.
 
-![docker-network-explain]('/images/docker-network-explain(1).png')
+![docker-network-explain](/images/docker-network-explain(1).png)
 
 이제 같은 네트워크로 묶는 방법을 설명하고자 한다.  
 먼저 서로를 같은 영역에 둘 네트워크를 생성하고, 해당 네트워크가 제대로 생성되었는지 확인한다.
