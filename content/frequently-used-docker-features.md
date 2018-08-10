@@ -98,7 +98,7 @@ ping b-container
 64 bytes from 172.20.0.3: icmp_seq=2 ttl=255 time=0.072 ms
 64 bytes from 172.20.0.3: icmp_seq=3 ttl=255 time=0.075 ms
 ```
-&nbsp;
+&nbsp;  
 ##Storage
 저장소 위치를 설정하는 내용이다. Docker를 내가 원하는 파일시스템에 위치시킨다거나 혹은 Container의 일부 설정을 내가 지정한 곳의 파일로 맵핑시킨다던지 등 원하는 목적에 맞게끔 설정하는 다양한 방법들이 존재한다.
 
