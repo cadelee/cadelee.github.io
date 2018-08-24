@@ -1,7 +1,7 @@
 ---
 author: Cade Lee
-title: 자주 사용하는 도커기능 정리
-subtitle: frequently-used-docker-features
+title: 자주 사용하는 도커기능 [1]
+subtitle: frequently-used-docker-features-1
 category: DOCKER
 date: 2018/08/08
 ---
@@ -12,7 +12,7 @@ date: 2018/08/08
 ///
 
 ## Network
-처음 Docker를 사용할때 network의 존재를 모르고 같은 서버에 존재하는 다른 컨테이너를 연결할려고 할때 nginx proxy를 설정하여 A 컨테이너, B 컨테이너를 서로 웹서버를 통해서 바라볼 수 있게 했었다. 이렇게 하면 안되나? 아니다, 해도 된다. 서로 다른 서버에 존재하는 컨테이너라면 위와같은 방식을 통해서 할수도 있을것이다. 다만 같은 서버라면 얘기가 달라진다. 도메인을 통해서 호출하는 방식은 DNS를 거쳐 아이피를 얻어온 후 요청을 하게된다. 같은 네트워크로 묶어준다면 DNS에 질의할 필요없이 다이렉트로 해당 컨테이너에 연결이 가능하다. 전자와 후자중 더 빠른건 후자다. 빠르고 간편한데 안쓸 이유가 없다.
+처음 Docker를 사용할때 network의 존재를 모르고 같은 서버에 존재하는 다른 컨테이너를 연결할려고 할때 <code class="word">nginx proxy</code>를 설정하여 A 컨테이너, B 컨테이너를 서로 웹서버를 통해서 바라볼 수 있게 했었다. 이렇게 하면 안되나? 아니다, 해도 된다. 서로 다른 서버에 존재하는 컨테이너라면 위와같은 방식을 통해서 할수도 있을것이다. (이 경우에도 <code class="word">overlay driver</code> 방식을 통해서 사용할수도 있다.) 다만 같은 서버라면 얘기가 달라진다. 도메인을 통해서 호출하는 방식은 DNS를 거쳐 아이피를 얻어온 후 요청을 하게된다. 같은 네트워크로 묶어준다면 DNS에 질의할 필요없이 다이렉트로 해당 컨테이너에 연결이 가능하다. 전자와 후자중 더 빠른건 후자다. 빠르고 간편한데 안쓸 이유가 없다.
 
 간단히 도식화한 그림이다. 아래중 첫번째가 웹서버를 통한 컨테이너 접근이고 두번째는 같은 네트워크를 이용해서 다이렉트로 서로를 바라볼 수 있게 만든 방식이다.
 
@@ -22,16 +22,16 @@ date: 2018/08/08
 먼저 서로를 같은 영역에 둘 네트워크를 생성하고, 해당 네트워크가 제대로 생성되었는지 확인한다.
 
 ```bash
-docker network create abcd //network 생성 명령어 abcd가 네트워크 명칭이다.
+$ docker network create abcd //network 생성 명령어 abcd가 네트워크 명칭이다.
 8422a4b89f4c14359cf1ed7e1f64e8992e55aa6580c924d199e165d7d83be6a4 // 생성된 결과 메시지
-docker network ls // 네트워크 목록 확인
+$ docker network ls // 네트워크 목록 확인
 NETWORK ID          NAME                          DRIVER              SCOPE
 8422a4b89f4c        abcd                          bridge              local
 ```
 &nbsp;  
 새로운 컨테이너를 생성할때 네트워크를 추가해주면 된다.  
 ```bash
-docker run -d --name a-container --network=abcd ${image}
+$ docker run -d --name a-container --network=abcd ${image}
 ```
 &nbsp;  
 -d: background로 동작함. 없이 실행하면 보고있는 커맨드 화면에서 직접 실행되고 종료시 컨테이너도 종료됨.  
@@ -42,7 +42,7 @@ ${image}: 구동할 컨테이너의 이미지명
 이렇게 실행시킨 컨테이너가 abcd 네트워크에서 잘 동작하고 있는지 확인할려면
 
 ```bash
-docker network inspect abcd
+$ docker network inspect abcd
 [
     {
         "Name": "abcd",
@@ -91,17 +91,28 @@ Containers 부분에 내가 지정한 컨테이너명이 배열로 들어가있�
 아래와 같은 명령어를 통해서 컨테이너 안으로 접근한 다음 curl이나 ping 명령어를 통해서 b-container를 확인해주면 된다.
 
 ```bash
-docker exec -it a-container bin/bash
-ping b-container
+$ docker exec -it a-container bin/bash
+$ ping b-container
 64 bytes from 172.20.0.3: icmp_seq=0 ttl=255 time=0.074 ms
 64 bytes from 172.20.0.3: icmp_seq=1 ttl=255 time=0.067 ms
 64 bytes from 172.20.0.3: icmp_seq=2 ttl=255 time=0.072 ms
 64 bytes from 172.20.0.3: icmp_seq=3 ttl=255 time=0.075 ms
 ```
-&nbsp;  
-##Storage
-저장소 위치를 설정하는 내용이다. Docker를 내가 원하는 파일시스템에 위치시킨다거나 혹은 Container의 일부 설정을 내가 지정한 곳의 파일로 맵핑시킨다던지 등 원하는 목적에 맞게끔 설정하는 다양한 방법들이 존재한다.
 
-####계속 업데이트 될 예정입니다.
+## Network Driver
+Docker에서 제공하는 <code class="word">Network Driver</code> 옵션은 5가지가 있다. 하나씩 설명하고자 한다.  
+
+| driver  | description                                                                                            |
+|---------|--------------------------------------------------------------------------------------------------------|
+| bridge  | 기본 네트워크 성격의 드라이버. 네트워크 드라이버 옵션을 따로 지정해주지 않을 경우 default로 생성된다.  |
+| host    | 도커가 설치된 host의 네트워크를 사용한다.                                                              |
+| overlay | [Docker Swarm] 혹은 다중 서버 컨테이너 네트워크 공유를 위해 사용한다.                                  |
+| macvlan | Mac Address를 직접적으로 할당하여 네트워크를 사용한다.                                                 |
+| none    | 네트워크 연결이 필요없을 경우 사용한다.                                                                |
+
+용도에 맞는 드라이버를 사용하면되고, 관리할 컨테이너가 많아지는 경우에는 <code class="word">Orchestration 프레임워크</code>를 도입해서 사용하는게 편하다.
+
+다음에는 도커 데이터 저장관련 내용을 적어보고자 한다. 끝!
 
 [Docker]: https://www.docker.com/
+[Docker Swarm]: https://docs.docker.com/engine/swarm/
