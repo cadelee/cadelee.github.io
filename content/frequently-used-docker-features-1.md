@@ -112,6 +112,9 @@ Docker에서 제공하는 <code class="word">Network Driver</code> 옵션은 5�
 
 용도에 맞는 드라이버를 사용하면되고, 관리할 컨테이너가 많아지는 경우에는 <code class="word">Orchestration 프레임워크</code>를 도입해서 사용하는게 편하다.
 
+간단한 사용예시를 적어보자면,  
+<code class="word">nginx</code>는 도커를 사용하고자 하고, 서비스들이 컨테이너가 아닌 내 호스트에서 동작하는경우 nginx 컨테이너 파일을 생성할때 네트워크 드라이버를 <code class="word">host</code>를 적용시켜서 호스트의 서비스들도 <code class="word">nginx proxy</code>를 이용해서 적용하게끔 할 수 있다. 이렇게 할 경우 컨테이너로 존재하는 서비스들도 <code class="word">nginx proxy</code> 적용이 가능해진다. (컨테이너 서비스들을 생성할때 -p 옵션으로 호스트와 포트가 연결되어 있어야 한다)
+
 다음에는 도커 데이터 저장관련 내용을 적어보고자 한다. 끝!
 
 [Docker]: https://www.docker.com/
